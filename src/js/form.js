@@ -970,6 +970,11 @@ class HForm {
 		HLUX.formJson = a;
 		return a;
 	}
+	static render(elm,sch,handlers = {}){
+		$.extend(sch,handlers);
+		const hf = new HForm(elm,sch);
+		hf.display();
+	}
 }
 
 /******************************************************
