@@ -23,7 +23,16 @@ const esConfig = defineConfig({
             output: {
                 dir: 'dist',
                 inlineDynamicImports: true,
-                exports: 'named'
+                exports: 'named',
+                banner: `
+/*!
+ * Hopes Form (Free Edition)
+ * @version 1.0.0
+ * @author Laurent REBIERE
+ * @license MIT
+ * @repository https://github.com/expert-solutions-clariprint/hopes-form
+ */
+    `.trim()
             }
         },
         cssCodeSplit: false // Gestion propre des CSS        

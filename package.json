@@ -1,11 +1,21 @@
 {
-  "name": "hopesform",
+  "name": "@expert-solutions-clariprint/hopes-form",
   "version": "1.0.0",
-  "description": "Hopes-Form - Dynamic Forms",
-  "_main": "./src/index.js",
   "main": "./dist/hopesform.umd.js",
   "module": "./dist/hopesform.mjs",
-  "_types": "./dist/types/index.d.ts",
+  "author": "REBIERE LAURENT",
+  "license": "MIT",
+  "keywords": ["form", "builder", "json", "hopes-studio"],
+  "description": "Free edition of Hopes Form – JSON-driven dynamic form engine.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/expert-solutions-clariprint/hopes-form.git"
+  },
+  "bugs": {
+    "url": "https://github.com/expert-solutions-clariprint/hopes-form/issues"
+  },
+  "homepage": "https://github.com/expert-solutions-clariprint/hopes-form#readme",
+
   "files": [
     "dist"
   ],
@@ -29,13 +39,7 @@
     "cash-dom": "^8.1.5",
     "ejs": "^3.1.9"
   },
-  "keywords": [
-    "UX",
-    "UI",
-    "Form"
-  ],
-  "author": "REBIERE LAURENT",
-  "license": "MIT",
+  
   "devDependencies": {
     "@vitejs/plugin-legacy": "^6.0.2",
     "validate-package": "^1.0.0",

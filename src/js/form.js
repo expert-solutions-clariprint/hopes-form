@@ -1,5 +1,18 @@
+/**
+ * HForm/form.js
+ * Core rendering class for Hopes Form.
+ *
+ * @module HForm
+ * @version 1.0.0
+ * @author Laurent REBIERE
+ * @license MIT
+ * @repository https://github.com/expert-solutions-clariprint/hopes-form
+ * 
+ * This file is part of the Hopes Form open source project.
+ */
+
 import * as HU from "./utils";
-// import 'ejs/ejs.min.js';
+// import 'ejs/ejs.min.js'; // optional, only if u use EJS template file
 
 class HForm {
 	static instances = [];
@@ -751,9 +764,9 @@ class HForm {
  *
  * ***************************************************/
 
-	static debugOnchange(hf) {
-		console.log(hf);
-		alert(JSON.stringify(hf.getValues()));
+	static debugOnchange(data) {
+		console.log(data);
+		alert(JSON.stringify(data));
 	}
 
 	constructor(elem,tpl) {
@@ -790,7 +803,11 @@ class HForm {
 		const onLoad = function() {
 
 			THIS.setUiCustomizerEvents();
-			// THIS.$find('form').on("change", HU.proxy(THIS.onchange, THIS, THIS));
+			const OnChange = ()=>{
+				THIS.onchange(THIS.getValues());
+			};
+//			THIS.$find('form').on("change", HU.proxy(THIS.onchange, THIS, THIS));
+			THIS.$find('form').on("change", OnChange);
 			if (typeof catllback === "function")
 				callback(THIS);	
 			if (typeof THIS.locals.onload === "function")
@@ -987,7 +1004,7 @@ class HForm {
  * ****************************************************/
 
 window.includeEJS = function (kind,param,tag = "div",includeTag = "includeEJS") {
-	let UUID = uniqid("includeEJS"),
+	let UUID = HU.uniqid("includeEJS"),
       PARAM = param,
 	    url = HForm.getEJSbyKind(kind);
 	
@@ -1037,8 +1054,6 @@ window.waitIncludeEJS = function (kind,param,tag = "div") {
 import * as SELECT from "./field-select.js";
 import * as MULTISELECT from "./field-multiselect.js";
 import * as MULTICONTROL from "./field-multicontrol.js";
-import * as IMGFILE from "./field-imgfile.js";
-import * as IMGFILEARCHIVE from "./field-imgfileArchive.js";
 
 HForm.templates.common = {
 	tplKind : {
@@ -1066,16 +1081,6 @@ HForm.templates.common = {
         			${field.require ? "require" : ""}
         	      	aria-labelledby="label${field.fid}">
         	`;
-		},
-		"imgFile" : IMGFILE.default,
-		"imgFileArchive" : IMGFILEARCHIVE.default,
-		"tatoo-img" : (field) => {
-
-			return "";
-		},
-		"tatoo-text" : (field) => {
-
-			return "";
 		},
 		"select" : SELECT.default,
 		"multiselect" : MULTISELECT.default,
@@ -1354,8 +1359,8 @@ HForm.tpl_case1 = {
 		["Options","FL_H","FT_H","cornerRadius","FSA"]
 	],
 	onchange_effects : [],
-	onload: function(){alert("Form loaded !");},
-	onchange: null,
+	onload: (form)=>{alert("Form loaded !");},
+	onchange: (data)=>{console.log(data)},
 
 	buttonConfirm: {
 		label: "yes",

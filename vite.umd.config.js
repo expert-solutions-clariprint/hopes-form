@@ -1,8 +1,15 @@
+// import banner from 'vite-plugin-banner';
 import { defineConfig } from 'vite';
 
 // Configuration pour le `.umd.js` (CommonJS)
 const umdConfig = defineConfig({
-    plugins: [],
+ /*   plugins: [    
+        banner(`
+Hopes Form (Free Edition) v1.0.0
+(c) ${new Date().getFullYear()} Laurent REBIERE / Hopes Studio
+MIT License - https://github.com/expert-solutions-clariprint/hopes-form
+    `.trim())
+    ], */
     publicDir: 'public',  // Utiliser un dossier public pour les assets statiques
     root: './',
     base: './',
@@ -48,6 +55,17 @@ const umdConfig = defineConfig({
             input: {
                 main: './index.html'  // Ajoute l'entrée HTML principale
             },
+            output: {
+                banner: `
+/*!
+ * Hopes Form (Free Edition)
+ * @version 1.0.0
+ * @author Laurent REBIERE
+ * @license MIT
+ * @repository https://github.com/expert-solutions-clariprint/hopes-form
+ */
+    `.trim()
+            }
         },
         cssCodeSplit: false // Gestion propre des CSS
     }

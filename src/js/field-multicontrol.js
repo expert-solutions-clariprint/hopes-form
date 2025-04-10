@@ -1,3 +1,15 @@
+/**
+ * HForm/field-imgfile.js
+ * Template file for multicontrol fields in Hopes Form.
+ *
+ * @module HForm
+ * @version 1.0.0
+ * @author Laurent REBIERE
+ * @license MIT
+ * @repository https://github.com/expert-solutions-clariprint/hopes-form
+ * 
+ * This file is part of the Hopes Form open source project.
+ */
 export default (field) => {
   const locals = field;
   const value = field.value;
