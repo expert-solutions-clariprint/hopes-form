@@ -1599,7 +1599,7 @@ let S = class E {
     console.log(e), alert(JSON.stringify(e.getValues()));
   }
   constructor(e, n) {
-    E.instances.push(this), this.tpl = n, this.element = e, E.template = n.template && E.templates[n.template] ? E.templates[n.template] : E.templates[0], Array.isArray(e) && e.length > 0 ? e[0].hform = this : e && (e.hform = this), this.locals = {
+    E.instances.push(this), this.tpl = n, this.element = e, E.template = n.template && E.templates[n.template] ? E.templates[n.template] : E.templates.bootstrap5v1, Array.isArray(e) && e.length > 0 ? e[0].hform = this : e && (e.hform = this), this.locals = {
       fields: [],
       fieldIds: [],
       displayed_fields: [],
