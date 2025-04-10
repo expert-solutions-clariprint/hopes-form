@@ -96,7 +96,7 @@ If you want more control, you can instantiate `HForm` manually:
 ## 🧪 Playground
 
 Try it online avaolable soon at:  
-👉 [https://www.expert-solutions.fr/form-playground](https://www.expert-solutions.fr/form-playground)
+👉 [playground on codepen](https://codepen.io/pen?template=qEBzPaM)
 
 
 ---
