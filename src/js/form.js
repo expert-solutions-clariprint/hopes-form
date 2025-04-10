@@ -760,7 +760,9 @@ class HForm {
 		HForm.instances.push(this);
 		this.tpl = tpl;
 		this.element = elem;
-		HForm.template = tpl.template && HForm.templates[tpl.template] ? HForm.templates[tpl.template] : HForm.templates[0];
+		HForm.template = tpl.template && HForm.templates[tpl.template] 
+				? HForm.templates[tpl.template] 
+				: HForm.templates["bootstrap5v1"];
 
 		if (Array.isArray(elem) && elem.length > 0) elem[0].hform = this;
 		else if (elem) elem.hform = this; 
