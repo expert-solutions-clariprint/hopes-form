@@ -12,7 +12,10 @@
  */
 
 import * as HU from "./utils";
+window.HU=HU;
+
 // import 'ejs/ejs.min.js'; // optional, only if u use EJS template file
+
 
 class HForm {
 	static instances = [];

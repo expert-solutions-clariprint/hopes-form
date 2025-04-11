@@ -72,6 +72,25 @@ const sample_datas = {
                 "Cardboard;WHITE;3",
                 "Cardboard;WHITE;5"
                 ],
+	JDF_LIST : [
+            "F4_1",
+            "F6_1","F6_4",
+            "F8_1","F8_3","F8_4","F8_5",
+            "F10_1",
+            "F12_3",
+            "F14_1",
+            "F16_4","F16_5"
+        ],
+	comment : "list of JDF fold image file name",
+	JDF_LIST_IMG : [
+            "F4_1.png",
+            "F6_1.png","F6_4.png",
+            "F8_1.png","F8_3.png","F8_4.png","F8_5.png",
+            "F10_1.png",
+            "F12_3.png",
+            "F14_1.png",
+            "F16_4.png","F16_5.png"
+        ]
 }
 
 const schema_parts = {
@@ -110,20 +129,16 @@ export default [
 	        	value : "1000", "min" : "300", "max" : "3000", "step" : "1" },
 	        { 	fid : "sideOffset", "label" : "Side Offset", "unit" : "mm", 
 	        	value : "0", "min" : "0", "max" : "400", "step" : "1" },
-	        { 	fid : "cornerRadius", "label" : "Corner radius", "unit" : "mm", 
-	        	value : "40", "min" : "0", "max" : "400", "step" : "1" },
 
 	        { 	fid : "FSA", "label" : "Front Side Angle", "unit" : "degree", 
 	        	value : "15", "min" : "0", "max" : "30", "step" : "1" },
 
 	        { 	fid : "FL_H", "label" : "Low Front panel", "unit" : "mm", 
 	        	value : "80", "min" : "0", "max" : "300", "step" : "1" },
-	        { 	fid : "FT_H", "label" : "Top Front panel", "unit" : "mm", 
-	        	value : "100", "min" : "50", "max" : "300", "step" : "1"},
 
 	        { 	fid : "numShelfs", 
-	            "label" : "Number of shelfs", 
-	            "unit" : "", 
+	            label : "Number of shelfs", 
+	            unit : "", 
 	            help : true,
 	            helpTag: 'papiers',
 	            value : {
@@ -132,20 +147,20 @@ export default [
 	                "options" : sample_datas.ITEM_NUMBER
 	            }
 	        },
-	        { fid : "numWalls", 
-	            "label" : "Number of vertical walls", 
-	            "unit" : "", 
-	            value : {
-	                "kind" : "select",
-	                "value" : 2,
-	                "options" : sample_datas.ITEM_NUMBER
-	            }
-	        }
+	        { 	fid : "JDF", 
+	        	label : "Kind of folder", 
+               	value : {
+                	kind : "select", 
+                	value : "F4_1", 
+                	options : sample_datas.JDF_LIST,
+                	options_img : sample_datas.JDF_LIST_IMG
+                }
+             }
 		],
 		user_interface_organizer : [
 			["Order","q"],
 			["Specs","MATERIAL","height","length","width","numShelfs","numWalls","sideOffset"],
-			["Options","FL_H","FT_H","cornerRadius","FSA"]
+			["Options","FL_H","JDF"]
 		],
 		onchange_effects : [],
 		onload: (form)=>{alert("Form loaded !");},

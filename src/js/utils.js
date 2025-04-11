@@ -127,9 +127,9 @@ export function extend(target, ...sources) {
  * 	btselect
  * 
  * **********************************************************************/
-
+/*
 export class BtSelect {
-	static allInstances = [];
+	static instances = [];
 
 	static updateFromA($a) {
   		console.log($a);
@@ -138,7 +138,7 @@ export class BtSelect {
         $bt_select.find("select option").attr("selected",false);
 //        $($bt_select.find("select option")[parseInt($a.attr("aria-index"))]).attr("selected",true);
         $bt_select.find("select")[0].selectedIndex = parseInt($a.attr("aria-index"));
-        $bt_select.find("select").change();
+        $bt_select.find("select").trigger("change");
     }	
 
 	static init($n) {
@@ -159,7 +159,7 @@ export class BtSelect {
     }	
 
     static initInstances() {
-    	BtSelect.allInstances.forEach((bts) => BtSelect.init(bts));
+    	BtSelect.instances.forEach((bts) => BtSelect.init(bts));
     }
 
     constructor($node){
@@ -167,7 +167,7 @@ export class BtSelect {
       console.log($node);
      
      	this.$snode = $node;
-      BtSelect.allInstances.push(this);
+      BtSelect.instances.push(this);
       $node.each((ind,n) => {
       		BtSelect.init($(n));
       });
@@ -181,4 +181,86 @@ export class BtSelect {
 	        BtSelect.updateFromA($a);
 	    });    	
     }
+}
+*/
+export class BtSelect {
+  static instances = [];
+
+  static updateFromA($a) {
+    const $bt_select = $a.closest(".bootstrap-select");
+    const $select = $bt_select.find("select");
+    const index = parseInt($a.attr("aria-index"), 10);
+
+    // Update displayed value
+    $bt_select.find("div.filter-option-inner-inner").html($a.html());
+
+    // Update native select
+    $select[0].selectedIndex = index;
+    $select.trigger("change");
+
+    // Close dropdown
+    $bt_select.find(".dropdown-menu").removeClass("show");
+  }
+
+  static init($n) {
+    let $bt_node = $n;
+    let $bt_select = null;
+
+    if ($n[0].tagName === "SELECT") {
+      $bt_node = $n.parent();
+      $bt_select = $n;
+    }
+
+    if ($bt_node.hasClass("bootstrap-select")) {
+      if (!$bt_select) $bt_select = $bt_node.find("select");
+      const selectInd = $bt_select[0].selectedIndex;
+      const $a = $($bt_node.find("a[role=option]")[selectInd]);
+      $bt_node.find("button .filter-option-inner-inner").html($a.html());
+    }
+  }
+
+  static initInstances() {
+    BtSelect.instances.forEach((bts) => BtSelect.init(bts.$snode));
+  }
+
+  constructor($node) {
+    this.$snode = $node;
+    BtSelect.instances.push(this);
+
+    // Init HTML
+    $node.each((i, el) => BtSelect.init($(el)));
+
+    // Bind events
+    const $select = $node.find("select");
+    $select.hide();
+
+    // $select.on("change", () => BtSelect.init($node));
+
+    // Toggle dropdown on button click
+    const $button = $node.find("button.dropdown-toggle");
+    const $menu = $node.find(".dropdown-menu");
+
+    $button.on("click", (evt) => {
+      evt.preventDefault();
+      $menu.toggleClass("show");
+    });
+
+    // Close dropdown on outside click
+    $(document).on("click", (evt) => {
+      if (
+        !$(evt.target).closest($node).length &&
+        !$(evt.target).is($button)
+      ) {
+        $menu.removeClass("show");
+      }
+    });
+
+    // Click on option
+    $node.find("a[role=option]")
+      .off("click")
+      .on("click", (evt) => {
+        const $a = $(evt.target).closest("a");
+        BtSelect.updateFromA($a);
+      });
+  }
 }
