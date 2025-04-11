@@ -40,6 +40,7 @@ class HForm {
 	static transl = (term,context)=>{return term};
 	static templates = [];
 	static template = null;
+	static samples = [];
 	static getKind(self) {
 		HU.log("getKind()");
 		HU.log(self);
@@ -289,6 +290,12 @@ class HForm {
 			return $(HForm.mainbar).find(selector);
 		return $([]);
 	}
+
+/*********************************************************
+ * 
+ * 		Change events workflow utilities
+ * 
+ * *******************************************************/
 	
 	selector_effect_show_target(fids){
 		this.$find("#"+fids.join(",#")).show();
@@ -738,6 +745,11 @@ class HForm {
 		}
 */
 	}
+/****************************************************
+ * 
+ *				loading utilities
+ *
+ * ***************************************************/
 
 	triggerIfFieldsLoaded() {
 		const idToBefilled = [];
@@ -769,12 +781,14 @@ class HForm {
 		alert(JSON.stringify(data));
 	}
 
-	constructor(elem,tpl) {
+	constructor(_elem,schema) {
+		console.log(`new HForm()`,_elem,schema);
 		HForm.instances.push(this);
-		this.tpl = tpl;
+		const elem = $(_elem);
+		this.schema = schema;
 		this.element = elem;
-		HForm.template = tpl.template && HForm.templates[tpl.template] 
-				? HForm.templates[tpl.template] 
+		HForm.template = schema.template && HForm.templates[schema.template] 
+				? HForm.templates[schema.template] 
 				: HForm.templates["bootstrap5v1"];
 
 		if (Array.isArray(elem) && elem.length > 0) elem[0].hform = this;
@@ -785,15 +799,15 @@ class HForm {
 			displayed_fields : [],
 			malformed_fields : []
 		}
-		$.extend(this.locals,tpl);
+		$.extend(this.locals,schema);
 		if (Array.isArray(this.locals.fields))
 			this.locals.fields.forEach(field => {
 				if (field.fid && !this.locals.fieldIds.includes(field.fid))
 					this.locals.fieldIds.push(field.fid);
 			});
 		this.onchange = HForm.debugOnchange;
-		if (typeof tpl.onchange === "function") 
-			this.onchange = tpl.onchange;
+		if (typeof schema.onchange === "function") 
+			this.onchange = schema.onchange;
 	};
 
 	display(callback) {
@@ -1043,332 +1057,13 @@ window.waitIncludeEJS = function (kind,param,tag = "div") {
 	return window.includeEJS(kind,param,tag,"waitIncludeEJS");
 }
 
+//////////////////////////////////////////
 
-/******************************************************
- * 
- * 	bt5 template base
- * 
- * ****************************************************/
+import * as SAMPLES from "./samples.js";
+HForm.samples = SAMPLES.default;
 
-
-import * as SELECT from "./field-select.js";
-import * as MULTISELECT from "./field-multiselect.js";
-import * as MULTICONTROL from "./field-multicontrol.js";
-
-HForm.templates.common = {
-	tplKind : {
-		"text" : (field) => {
-        	return `
-        	      <input type="text" name="${field.fid}" id="${field.fid}" 
-        	      	class="form-control ${field.unit ? "text-end" : ""}" 
-        	      	placeholder="${ field.placeholder ? HForm.transl(filed.placeholder,tContext) : ""}" 
-        	      	style="min-width: 50px" 
-        	      	value="${field.value}" 
-        			${field.require ? "require" : ""}
-        	      	aria-labelledby="label${field.fid}">
-        	`;
-		},
-		"number" : (field) => {
-        	return `
-        	      <input type="number" name="${field.fid}" id="${field.fid}" 
-        	      	class="form-control text-end"
-        	      	placeholder="${ field.placeholder ? HForm.transl(filed.placeholder,tContext) : ""}" 
-        	      	style="min-width: 50px" 
-        	      	value="${field.value}" 
-        			min="${field.min}"
-        			max="${field.max}"
-        			step="${field.step}"
-        			${field.require ? "require" : ""}
-        	      	aria-labelledby="label${field.fid}">
-        	`;
-		},
-		"select" : SELECT.default,
-		"multiselect" : MULTISELECT.default,
-		"multicontrol" : MULTICONTROL.default
-	}
-}
-
-
-HForm.templates.bootstrap5v1 = {
-  tplField : (field) => {
-    const fid = field.fid;
-    const fval = field.value;
-    const tContext = field.translationContext ? field.translationContext : "product";
-    const asLabel = !!field.label && field.label !== "";
-    const asUnit = !!field["unit"] && field.unit != "";
-    const asRequire = !!fval.require && !!fval.invalid_msg;
-    
-    const css = {
-      col : () => {
-        var cssCl = "col-12";
-        if (!!field.bt_nb_cols) 
-          cssCl = `col col-sm-12 col-lg-${field.bt_nb_cols}`;
-
-        else if (HU.isObject(fval) && fval.kind === "multiselect")
-          cssCl = "col col-12";
-
-        else if (!HU.isObject(fval) || HU.isObject(fval) && 
-                      ["imgFile"].includes(fval.kind))
-          cssCl = "col col-sm-12 col-md-6 col-lg-4";
-
-        else if (HU.isObject(fval) && fval.kind === "select")
-          cssCl = "col col-sm-12 col-lg-6";
-        return cssCl;
-      },
-      card : () => {
-        if (!asLabel) return "card border-0";
-        return "card mt-2 mb-2 border";
-      },
-      cardBody : () => {return "card-body";},
-      cardHeader : () => {return "card-header h6";}
-    };
-    const tplLabel = asLabel ?
-        `<div class="${css.cardHeader()}">
-            <label id="label${fid}">${HForm.transl(field.label,tContext)}</label>
-            <div role="help" field="${fid}"></div>
-        </div>`
-        : "";
-
-    const tplUnit = asUnit 
-    	? `<span class="input-group-text">${ field.unit }</span>`
-        : "";
-
-    const tplFeedback = asRequire 
-        ? `<div class="invalid-feedback">${ _val.invalid_msg }</div>`
-        : "";
-
-    const kind = HU.isObject(fval) && typeof(fval.kind) === "string" 
-    				? fval.kind 
-    				: field.min && field.max ? "number" : "text";
-    const tplKind = HForm.templates.common.tplKind[kind]
-    					? HForm.templates.common.tplKind[kind](field)
-    					: "";
-
-    const toFill = tplKind === "";
-
-    field.toBefilled = toFill;
-
-    return `
-              <div class="${ css.col() }">
-                <div class="${ css.card() }">  
-                 ${tplLabel}
-                  <div class="${css.cardBody()}">
-                    <div class="input-group ${toFill ? "need-content" : ""}" id="${ fid }">
-    				${tplKind}
-                    ${tplUnit} 
-                    </div>
-                  ${tplFeedback}     
-                  </div>
-                </div>
-              </div>`;
-  },
-  tplGroup : (group) => {
-    const gid = group.gid;
-    const tplFields = () => {
-      var tpl = "";
-      group.fields.forEach(field => tpl += HForm.templates.bootstrap5v1.tplField(field));
-      return tpl;
-    };
-     return `
-     <div class="col-12" role="fieds-group" id="${gid}">
-      <div class="card border mt-2 mb-2">  
-        <div class="card-header h6">
-            <label for="${gid}">${HForm.transl(gid,"products")}</label>
-            <div role="help" field="${gid}"></div>
-        </div>
-        <div class="card-body container">
-            <div class="row">
-     ${tplFields()}
-            </div>
-        </div>
-    </div>
-    </div>`;
-
-  },
-
-  render : (locals) => {
-    const content = ()=>{
-      var tpl = "";
-      const fieldsSorted = HForm.sortFields(locals.user_interface_organizer,locals.fields);
-      fieldsSorted.forEach(field => {
-        // case of field item
-        if (typeof field.fid === "string") 
-          tpl += HForm.templates.bootstrap5v1.tplField(field);
-        
-        // case of group item
-        else if (HU.isObject(field)) {
-          Object.entries(field).forEach(entry => {
-          var [groupId,groupFields] = entry;
-          if (Array.isArray(groupFields) && groupFields.length > 0) 
-            tpl += HForm.templates.bootstrap5v1.tplGroup({gid:groupId,fields:groupFields});
-          });
-        }
-      });
-      return tpl;
-    };
-    return `
-          <div class="container"> 
-            <div class="row">
-              <form class="needs-validation" novalidate>
-              ${content()}
-              </form>
-            </div>
-          </div>
-`;
-  }
-}
-
-/******************************************************
- * 
- * 	exemple of tpl data obj
- * 
- * ****************************************************/
-
-
-const tpl_datas = {
-	ITEM_NUMBER : [1,2,3,4,5,7,8,9,10],
-	MATERIAL_CSV : [                
-                "PVC Expanse;WHITE;2",
-                "PVC Expanse;WHITE;3",
-                "PVC Expanse;WHITE;4",
-                "PVC Expanse;WHITE;5",
-                "PVC Expanse;WHITE;6",
-                "PVC Expanse;WHITE;10",
-
-                "PVC Expanse;BLACK;3",
-                "PVC Expanse;BLACK;5",
-                "PVC Expanse;BLACK;8",
-                "PVC Expanse;BLACK;10",
-                "PVC Expanse;BLACK;19",
-
-                "PVC Expanse;BLUE;3",
-                "PVC Expanse;BLUE;5",
-                "PVC Expanse;BLUE;8",
-
-                "PVC Expanse;RED;3",
-                "PVC Expanse;RED;5",
-                "PVC Expanse;RED;8",
-
-                "PVC Expanse;GREY;3",
-                "PVC Expanse;GREY;5",
-                "PVC Expanse;GREY;8",
-
-
-                "PVC Compact;BLUE;2",
-
-                "PVC Compact;WHITE;2",
-                "PVC Compact;WHITE;3",
-
-                "PVC Compact;BLACK;2",
-                "PVC Compact;BLACK;3",
-
-                "PVC Compact;RED;2",
-                "PVC Compact;RED;3",
-
-                "PVC Compact;YELLOW;2",
-                "PVC Compact;YELLOW;3",
-
-                "PMMA;TRANSPARENT;2",
-                "PMMA;TRANSPARENT;3",
-                "PMMA;TRANSPARENT;4",
-                "PMMA;TRANSPARENT;5",
-                "PMMA;TRANSPARENT;6",
-                "PMMA;TRANSPARENT;8",
-                "PMMA;TRANSPARENT;10",
-                "PMMA;TRANSPARENT;12",
-
-                "Corrugated Cardboard;WHITE;10",
-                "Corrugated Cardboard;WHITE;16",
-                "Corrugated Cardboard;WHITE;19",
-
-                "Cardboard;WHITE;2",
-                "Cardboard;WHITE;3",
-                "Cardboard;WHITE;5"
-                ],
-}
-
-const tpl_parts = {
-	"MATERIAL_SELECTOR" : {
-        "kind" : "multiselect",
-        "value" : "PVC Expanse;WHITE;10",
-        "options" : tpl_datas.MATERIAL_CSV,
-        "labels" : ["Kind","Color","Thickness"],
-        "units" : ["","","mm"],
-        "separator" : ";",
-        "cols" : 3,
-       // "datas" : "CALLFUNC(fetch,#POS1_ALIAS§API_GET_POS1_SELECTOR_DATAS)",
-        "context" : {},
-        "filter" : "pos1_selector_filter"
-    },
-
-}
-
-HForm.tpl_case1 = {
-	template : "bootstrap5v1",
-	fields : [
-        {	fid : "q", "label" : "Quantity", "unit" : "ex", 
-        	value : "1", "min" : "1", "max" : "10000", "step" : "1"},
-        {
-            fid : "MATERIAL", "label" : "", 
-            value : tpl_parts.MATERIAL_SELECTOR
-        }, 
-        
-        { 	fid : "height", "label" : "Height", "unit" : "mm", 
-        	value : "1000", "min" : "300", "max" : "3000", "step" : "1"},
-        { 	fid : "length", "label" : "Length", "unit" : "mm", 
-        	value : "400", "min" : "100", "max" : "1500", "step" : "1"},
-        { 	fid : "width", "label" : "Width", "unit" : "mm", 
-        	value : "1000", "min" : "300", "max" : "3000", "step" : "1" },
-        { 	fid : "sideOffset", "label" : "Side Offset", "unit" : "mm", 
-        	value : "0", "min" : "0", "max" : "400", "step" : "1" },
-        { 	fid : "cornerRadius", "label" : "Corner radius", "unit" : "mm", 
-        	value : "40", "min" : "0", "max" : "400", "step" : "1" },
-
-        { 	fid : "FSA", "label" : "Front Side Angle", "unit" : "degree", 
-        	value : "15", "min" : "0", "max" : "30", "step" : "1" },
-
-        { 	fid : "FL_H", "label" : "Low Front panel", "unit" : "mm", 
-        	value : "80", "min" : "0", "max" : "300", "step" : "1" },
-        { 	fid : "FT_H", "label" : "Top Front panel", "unit" : "mm", 
-        	value : "100", "min" : "50", "max" : "300", "step" : "1"},
-
-        { 	fid : "numShelfs", 
-            "label" : "Number of shelfs", 
-            "unit" : "", 
-            help : true,
-            helpTag: 'papiers',
-            value : {
-                "kind" : "select",
-                "value" : 3,
-                "options" : tpl_datas.ITEM_NUMBER
-            }
-        },
-        { fid : "numWalls", 
-            "label" : "Number of vertical walls", 
-            "unit" : "", 
-            value : {
-                "kind" : "select",
-                "value" : 2,
-                "options" : tpl_datas.ITEM_NUMBER
-            }
-        }
-	],
-	user_interface_organizer : [
-		["Order","q"],
-		["Specs","MATERIAL","height","length","width","numShelfs","numWalls","sideOffset"],
-		["Options","FL_H","FT_H","cornerRadius","FSA"]
-	],
-	onchange_effects : [],
-	onload: (form)=>{alert("Form loaded !");},
-	onchange: (data)=>{console.log(data)},
-
-	buttonConfirm: {
-		label: "yes",
-		action: function() {alert("coucou");}
-	},
-	helper: function(){ return 'popopo'; }
-
-}
+import * as TEMPLATES from "./templates.js";
+HForm.templates = TEMPLATES.default;
 
 export {HForm};
 export default HForm;
