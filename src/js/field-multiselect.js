@@ -84,9 +84,12 @@ export default (field) => {
     for (var j=0;j<selectNum;j++) { 
       const subLabel = Array.isArray(_labels) ? _labels[j] : null;
       const _opts = selectMatrix[j];
+      const isHidden = Array.isArray(value.hiddenIndexes) && value.hiddenIndexes.includes(j) ? 
+          `<input type="hidden" role="multiselect" data-index="${j}" fid="${fid}" name="${fid}_${j}zzzvalue" value="${selectValArray[j]}"/>`
+          : false;
 
       console.log("coucou multiselect 3");
-      ret += ` 
+      ret += isHidden ? isHidden : (` 
     <div class="col-${cardW}">
       ${ subLabel ? `
       <div class="card mt-2 mb-2 border">  
@@ -122,7 +125,7 @@ export default (field) => {
           </div>
       </div>
     </div>
-  </div>` } 
+  </div>`) } 
   return ret;})() + `
     <input type="hidden" role="multiselect" name="${fid}" value="${selectval}"/>
   </div>`

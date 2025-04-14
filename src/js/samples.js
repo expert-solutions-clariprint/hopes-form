@@ -90,23 +90,83 @@ const sample_datas = {
             "F12_3.png",
             "F14_1.png",
             "F16_4.png","F16_5.png"
-        ]
+        ],
+    ADESA_COMBINATORY : [
+		"couche permanent;vernis brillant;892",
+		"couche permanent;pelliculage brillant;894",
+		"pp blanc;vernis brillant;896",
+		"pp blanc;pelliculage brillant;898",
+		"pp blanc;pelliculage mat;900",
+		"pp transparent;vernis brillant;902",
+		"pp transparent;pelliculage brillant;904",
+		"pp transparent;pelliculage mat;906",
+		"pp argent;vernis brillant;908",
+		"pp argent;pelliculage brillant;910",
+		"pp argent;pelliculage mat;912",
+		"couche enlevable;vernis brillant;914",
+		"couche enlevable;pelliculage brillant;916",
+		"couche enlevable;pelliculage mat;918",
+		"tintoretto;sans finition;920",
+		"papier perle gaufre;vernis brillant;922",
+		"couche permanent;pelliculage mat;928",
+		"rush couche permanent;vernis brillant;938",
+		"stickers pp blanc;pelliculage mat;946",
+		"planches pp blanc;pelliculage brillant;948",
+		"planches pp blanc;pelliculage mat;950",
+		"pp transparent vitrophanie;vernis brillant;954",
+		"planches couche permanent;vernis brillant;958",
+		"kraft;sans finition;960",
+		"rush couche permanent;pelliculage mat;973",
+		"rush couche permanent;pelliculage brillant;975",
+		"couche permanent;vernis mat;981",
+		"pp blanc;vernis mat;983",
+		"rush pp blanc;vernis brillant;985",
+		"rush pp blanc;pelliculage brillant;987",
+		"rush pp blanc;pelliculage mat;989",
+		"pp blanc;pelliculage soft touch;991",
+		"fluo jaune;sans finition;1011",
+		"couche recycle;sans finition;2025",
+		"pla clear;sans finition;2027",
+		"pp transparent;vernis mat;2028",
+		"couche enlevable;vernis mat;2033",
+		"pp blanc opaque dorsal argent;vernis brillant;2035",
+		"pp blanc renforce;vernis brillant;2039",
+		"couche renforce;pelliculage brillant;2041",
+		"couche renforce;pelliculage mat;2043",
+		"pp blanc renforce;pelliculage brillant;2045",
+		"pp blanc renforce;pelliculage mat;2047",
+		"pp blanc renforce;vernis mat;2049"
+	]
+
 }
 
 const schema_parts = {
-	"MATERIAL_SELECTOR" : {
-        "kind" : "multiselect",
-        "value" : "PVC Expanse;WHITE;10",
-        "options" : sample_datas.MATERIAL_CSV,
-        "labels" : ["Kind","Color","Thickness"],
-        "units" : ["","","mm"],
-        "separator" : ";",
-        "cols" : 3,
-       // "datas" : "CALLFUNC(fetch,#POS1_ALIAS�API_GET_POS1_SELECTOR_DATAS)",
-        "context" : {},
-        "filter" : "pos1_selector_filter"
+	MATERIAL_SELECTOR : {
+        kind : "multiselect",
+        value : "PVC Expanse;WHITE;10",
+        options : sample_datas.MATERIAL_CSV,
+        labels : ["Kind","Color","Thickness"],
+        units : ["","","mm"],
+        separator : ";",
+        cols : 3,
+        hiddenIndexes: [],
+       // "datas" : "CALLFUNC(fetch,#POS1_ALIAS§API_GET_POS1_SELECTOR_DATAS)",
+        context : {},
+        filter : "pos1_selector_filter"
     },
-
+    ADESA_SELECTOR : {
+        kind : "multiselect",
+        value : "couche permanent;vernis brillant;892",
+        options : sample_datas.ADESA_COMBINATORY,
+        labels : ["Material","Finish",""],
+        units : ["","",""],
+        separator : ";",
+        cols : 3,
+        hiddenIndexes: [2],
+       // "datas" : "CALLFUNC(fetch,#POS1_ALIAS§API_GET_POS1_SELECTOR_DATAS)",
+        context : {},
+        filter : null
+    }
 }
 
 export default [
@@ -171,5 +231,76 @@ export default [
 			action: function() {alert("coucou");}
 		},
 		helper: function(){ return 'popopo'; }
+	},
+	{
+		title: "adesa form",
+		template : "bootstrap5v1",
+		fields : [
+	        {	fid : "q", "label" : "Quantity", "unit" : "ex", 
+	        	value : "1", "min" : "1", "max" : "10000", "step" : "1"},
+	        { 	fid : "height", "label" : "Height", "unit" : "mm", 
+	        	value : "50", "min" : "20", "max" : "1000", "step" : "1"},
+	        { 	fid : "width", "label" : "Width", "unit" : "mm", 
+	        	value : "50", "min" : "20", "max" : "1000", "step" : "1" },
+	        {	fid : "model", "label" : "Number of model(s)", "unit" : "ex", 
+	        	value : "1", "min" : "1", "max" : "10", "step" : "1"},
+	        {	fid : "SCENARIO", "label" : "", 
+	            value : schema_parts.ADESA_SELECTOR }
+	    ],
+		onload: (form)=>{console.log("Form loaded !");},
+		onchange: (data)=>{
+			console.log(data)
+			const fetchOptions = {
+		      method: "POST",
+		      headers: {
+		        'accept': 'application/json',
+		        'Content-Type': 'application/json',
+		        'Authorization': 'Bearer TOKEN'
+		      },
+		      ...(body ? { body } : {})
+		    };
+		    const finalUrl = "https://api.myadesa.fr/quotes";
+
+			const schema = {
+					"scenario": {
+					"uid": parseInt(data.SCENARIO.split(";").at(-1))
+					},
+					"application": 1,
+					"coreSize": 40,
+					"height": data.height,
+					"width": data.width,
+					"orientation": 90,
+					"quantityPerRoll": 200,
+					"series": [
+					{
+						"quantity": data.q
+					}
+					],
+					"country": {
+					"countryCode": "fr"
+					},
+					"shape": {
+					"id": 1
+					}
+			};	    
+			fetchOptions.body = JSON.stringify(schema);
+    	// Exécution de la requête
+ 			console.log(fetchOptions);
+
+   			fetch(finalUrl, fetchOptions)
+      		.then(async res => {
+        		if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+		        const parsed = await res.json() 
+		        console.log(parsed);
+		        // success(parsed);              // 👈 callback jQuery-style
+		        return parsed;               // 👈 pour chainage avec .done()
+      		})
+	      .catch(err => {
+	        console.log(err);                  // 👈 callback jQuery-style
+	        throw err;                   // 👈 pour .fail()
+	      });
+		}
 	}
 ]
+	

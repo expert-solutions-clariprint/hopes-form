@@ -94,8 +94,8 @@ export default {
                 <div class="${ css.col() }">
                   <div class="${ css.card() }">  
                    ${tplLabel}
-                    <div class="${css.cardBody()}">
-                      <div class="input-group ${toFill}" id="${ fid }">
+                    <div class="${css.cardBody()}${kind === "multiselect" ? " p-0 m-0" : ""}">
+                      <div class="${kind === "multiselect" ? "container p-0" : "input-group"} ${toFill}" id="${ fid }">
       				        ${tplKind}
                       ${tplUnit} 
                       </div>

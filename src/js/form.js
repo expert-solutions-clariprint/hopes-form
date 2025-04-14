@@ -557,8 +557,8 @@ class HForm {
 				}
 			}
 		});
-		const $selectArr =this.$find(`select[role=multiselect][fid=${fid}]`);
-		const $input =this.$find(`input[role=multiselect][name=${fid}]`);
+ 		const $selectArr =this.$find(`select[role="multiselect"][fid="${fid}"], input[type="hidden"][role="multiselect"][fid="${fid}"]`);
+		const $input =this.$find(`input[role="multiselect"][name="${fid}"]`);
 		var selectIndex = parseInt(indexAttr);
 
 		// selectIndex = selectIndex === 0 ? 1 : selectIndex;
@@ -625,20 +625,26 @@ class HForm {
 	
 			console.log(goodValues);
 
-			const $options = $($selectToUpdate).find("option");
-			console.log($options);
-
-			var firstShow = $options.length-1;
-			$options.each(function(idx,elm){
-				if (goodValues.includes(elm.value)) {
-					$(elm).show();
-					firstShow = idx < firstShow ? idx : firstShow;
-				} else $(elm).hide();
-			});
 			console.log($selectToUpdate);
+			if ($selectToUpdate[0].tagName === "SELECT") {
 
-			if (!goodValues.includes($selectToUpdate.val()))
-				$selectToUpdate[0].selectedIndex=firstShow;
+				const $options = $($selectToUpdate).find("option");
+				console.log($options);
+
+				var firstShow = $options.length-1;
+				$options.each(function(idx,elm){
+					if (goodValues.includes(elm.value)) {
+						$(elm).show();
+						firstShow = idx < firstShow ? idx : firstShow;
+					} else $(elm).hide();
+				});
+				console.log($selectToUpdate);
+
+				if (!goodValues.includes($selectToUpdate.val()))
+					$selectToUpdate[0].selectedIndex=firstShow;
+			} else {
+				$selectToUpdate.val(goodValues[0]);
+			}
 		}
 		if (selectIndex < $selectArr.length-2) $selectToUpdate.trigger("change");
 		else {
