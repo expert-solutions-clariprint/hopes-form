@@ -1066,7 +1066,7 @@ const X = {
     labels: ["Material", "Finish", ""],
     units: ["", "", ""],
     separator: ";",
-    cols: 3,
+    cols: 2,
     hiddenIndexes: [2],
     // "datas" : "CALLFUNC(fetch,#POS1_ALIAS§API_GET_POS1_SELECTOR_DATAS)",
     context: {},
@@ -1556,10 +1556,10 @@ const We = (t) => {
       </div>`;
     },
     render: (t) => `
-            <div class="container"> 
-              <div class="row">
-                <form class="needs-validation" novalidate>
-                ${(() => {
+            <form class="needs-validation" novalidate>
+              <div class="container"> 
+                <div class="row">
+                  ${(() => {
       var n = "";
       return HForm.sortFields(t.user_interface_organizer, t.fields).forEach((s) => {
         typeof s.fid == "string" ? n += HForm.templates.bootstrap5v1.tplField(s) : I(s) && Object.entries(s).forEach((o) => {
@@ -1568,9 +1568,9 @@ const We = (t) => {
         });
       }), n;
     })()}
-                </form>
+                </div>
               </div>
-            </div>
+            </form>
   `
   }
 };
