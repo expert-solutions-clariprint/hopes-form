@@ -161,7 +161,7 @@ const schema_parts = {
         labels : ["Material","Finish",""],
         units : ["","",""],
         separator : ";",
-        cols : 3,
+        cols : 2,
         hiddenIndexes: [2],
        // "datas" : "CALLFUNC(fetch,#POS1_ALIAS§API_GET_POS1_SELECTOR_DATAS)",
         context : {},

@@ -150,13 +150,13 @@ export default {
         return tpl;
       };
       return `
-            <div class="container"> 
-              <div class="row">
-                <form class="needs-validation" novalidate>
-                ${content()}
-                </form>
+            <form class="needs-validation" novalidate>
+              <div class="container"> 
+                <div class="row">
+                  ${content()}
+                </div>
               </div>
-            </div>
+            </form>
   `;
     }
   }
