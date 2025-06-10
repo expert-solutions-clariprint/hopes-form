@@ -1,6 +1,6 @@
 {
   "name": "@expert-solutions-clariprint/hopes-form",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "./dist/hopesform.umd.js",
   "module": "./dist/hopesform.mjs",
   "author": "REBIERE LAURENT",
