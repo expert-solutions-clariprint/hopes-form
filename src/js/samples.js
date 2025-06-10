@@ -224,7 +224,7 @@ export default [
 		],
 		onchange_effects : [],
 		onload: (form)=>{alert("Form loaded !");},
-		onchange: (data)=>{console.log(data)},
+		onchange: (data)=>{console.log(data);},
 
 		buttonConfirm: {
 			label: "yes",

@@ -830,7 +830,7 @@ class HForm {
 				THIS.onchange(THIS.getValues());
 			};
 //			THIS.$find('form').on("change", HU.proxy(THIS.onchange, THIS, THIS));
-			THIS.$find('form').on("change", OnChange);
+			THIS.$find('input, select').on("change", OnChange);
 			if (typeof catllback === "function")
 				callback(THIS);	
 			if (typeof THIS.locals.onload === "function")

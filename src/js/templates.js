@@ -124,7 +124,7 @@ export default {
               ${tplFields()}
               </div>
           </div>
-      </div>
+        </div>
       </div>`;
 
     },
