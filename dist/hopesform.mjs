@@ -1552,7 +1552,7 @@ const We = (t) => {
       })()}
               </div>
           </div>
-      </div>
+        </div>
       </div>`;
     },
     render: (t) => `
@@ -1969,7 +1969,7 @@ let D = class C {
       const c = () => {
         n.onchange(n.getValues());
       };
-      n.$find("form").on("change", c), typeof catllback == "function" && e(n), typeof n.locals.onload == "function" && n.locals.onload(n);
+      n.$find("input, select").on("change", c), typeof catllback == "function" && e(n), typeof n.locals.onload == "function" && n.locals.onload(n);
     };
     $(this.element).on("HFORM_FIELDS_DISPLAYED", i);
     const s = this.locals;
