@@ -2058,7 +2058,9 @@ let D = class C {
     }), p(n), e.formJson = n, n;
   }
   static render(e, n, i = {}) {
-    $.extend(n, i), new C(e, n).display();
+    $.extend(n, i);
+    const s = new C(e, n);
+    return s.display(), s;
   }
 };
 window.includeEJS = function(t, e, n = "div", i = "includeEJS") {
