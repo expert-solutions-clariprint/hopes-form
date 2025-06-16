@@ -1016,6 +1016,7 @@ class HForm {
 		$.extend(sch,handlers);
 		const hf = new HForm(elm,sch);
 		hf.display();
+		return hf;
 	}
 }
 
